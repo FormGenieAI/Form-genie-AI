@@ -5,7 +5,7 @@ terraform_state_bucket_name = "birmingham-terraform-state-eu-west-2"
 terraform_lock_table_name   = "birmingham-terraform-locks"
 
 tags = {
-  Project     = "birmingham"
+  Project     = "birmigham"
   Environment = "shared"
   ManagedBy   = "terraform"
 }
