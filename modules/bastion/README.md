@@ -1,61 +1,40 @@
-bastion-host module
-This module is used to create a bastion host in a public subnet with SSH access via key pair and Systems Manager.
+# Terraform AWS Bastion Host Module
 
-The module is intended to use as module dependency.
+This module provisions a bastion host (EC2 instance) in a public subnet. The bastion host serves as a secure jump server to access resources, like databases or application instances, located in private subnets.
 
-Important note!
+## Usage
 
-Create EC2 key pair outside Terraform via AWS Console or CLI, then reference it by name.
+```hcl
+module "bastion" {
+  source = "../modules/bastion"
 
-Version
-1.0.0
+  project_name     = "my-app"
+  environment      = "dev"
+  public_subnet_id = module.vpc.public_subnets[0]
+  bastion_sg_id    = module.security_groups.bastion_security_group_id
+  key_name         = "my-ec2-keypair"
+  
+  common_tags = {
+    Owner       = "DevTeam"
+    Project     = "WebApp"
+  }
+}
+```
 
-Table of Contents
-bastion-host module
-Version
-Table of Contents
-Created Resources
-Inputs
-Outputs
-Prerequisites
-Providers
-Deployment
-Terraform Lifecycle Rules
-Created Resources
-Name	Type
-"${var.env}-${var.project}-bastion"	AWS EC2 Instance
-"${var.env}-${var.project}-bastion-sg"	AWS Security Group
-"${var.env}-${var.project}-bastion-role"	AWS IAM Role
-"${var.env}-${var.project}-bastion-profile"	AWS IAM Instance Profile
-"${var.env}-${var.project}-bastion-eip"	AWS Elastic IP (optional)
-Inputs
-Name	Description	Type	Default	Required
-env	Environment name	string	-	Y
-project	Project name	string	-	Y
-vpc_id	VPC ID where bastion host will be deployed	string	-	Y
-ami_id	AMI ID for the bastion host	string	-	Y
-public_subnet_id	Public subnet ID for bastion host placement	string	-	Y
-allowed_cidr_blocks	List of CIDR blocks allowed to SSH	list(string)	-	Y
-key_pair_name	Name of existing EC2 key pair	string	null	N
-instance_type	EC2 instance type for bastion host	string	t3.micro	N
-create_elastic_ip	Whether to create and attach an Elastic IP	bool	true	N
-kms_key_id	KMS key ID for encryption	string	null	N
-Outputs
-Name	Description
-bastion_instance_id	ID of the bastion host instance
-bastion_public_ip	Public IP address of the bastion host
-bastion_elastic_ip	Elastic IP address of the bastion host
-bastion_private_ip	Private IP address of the bastion host
-bastion_security_group_id	ID of the bastion host security group
-Prerequisites
-Terraform version: >= 1.9.0
+## Inputs
 
-Providers
-Name	Version
-aws	>= 5.59.0
-Deployment
-To run this code you need to execute:
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| project_name | Project name used for naming resources. | `string` | n/a | yes |
+| environment | Environment name such as dev, staging, or prod. | `string` | n/a | yes |
+| public_subnet_id | The ID of the public subnet to launch the bastion host in. | `string` | n/a | yes |
+| bastion_sg_id | The ID of the security group to associate with the bastion host. | `string` | n/a | yes |
+| key_name | The name of the EC2 key pair to allow SSH access. | `string` | n/a | yes |
+| common_tags | A map of common tags to apply to all resources. | `map(string)` | `{}` | no |
 
-terraform init
-terraform plan
-terraform apply
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| bastion_instance_id | The ID of the bastion EC2 instance. |
+| bastion_public_ip | The public IP address of the bastion host. |

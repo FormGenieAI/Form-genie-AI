@@ -1,42 +1,48 @@
-# VPC Module
+# Terraform AWS VPC Three-Tier Network Module
 
-## Purpose
-Creates a 3-tier VPC across 3 Availability Zones with:
-- 3 public subnets
-- 3 application subnets
-- 3 database subnets
-- 2 NAT Gateways
-- 1 Internet Gateway
-- route tables and associations
+This module provisions a new VPC with a three-tier network architecture suitable for a highly available web application.
 
-## Naming
-Resources are named with:
-<project_name>-<environment>-<resource>
+It creates the following resources:
+- A VPC with a user-defined CIDR block.
+- Public, Application, and Database subnets across three specified Availability Zones.
+- An Internet Gateway to provide internet access to the VPC.
+- A single NAT Gateway (in the first public subnet) and associated Elastic IP to allow outbound internet access for resources in the private subnets.
+- Route tables and associations to control traffic flow between subnets and the internet.
 
-Example:
-birmingham-dev-vpc
+## Usage
 
-## Architecture
-- Public subnets route to the Internet Gateway
-- Application subnets route to NAT Gateways
-- Database subnets remain private with no default internet route
+```hcl
+module "vpc" {
+  source = "../modules/vpc-three-tier-network-one-nat"
 
-## Notes
-- NAT Gateway 1 is in public subnet 1
-- NAT Gateway 2 is in public subnet 2
-- App subnet 3 routes to NAT Gateway 1 using modulo logic
+  project_name = "my-app"
+  environment  = "dev"
+  vpc_cidr     = "10.0.0.0/16"
+  azs          = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
+  
+  common_tags = {
+    Owner       = "DevTeam"
+    Project     = "WebApp"
+  }
+}
+```
 
 ## Inputs
-- project_name
-- environment
-- vpc_cidr
-- azs
-- common_tags
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| project_name | Project name used for naming resources. | `string` | n/a | yes |
+| environment | Environment name such as dev, staging, or prod. | `string` | n/a | yes |
+| vpc_cidr | CIDR block for the VPC, for example 10.0.0.0/16. Must be /24 or larger. | `string` | n/a | yes |
+| azs | A list of exactly 3 availability zones to deploy resources into. | `list(string)` | n/a | yes |
+| common_tags | A map of common tags to apply to all resources. | `map(string)` | `{}` | no |
 
 ## Outputs
-- vpc_id
-- public_subnets
-- app_subnets
-- db_subnets
-- internet_gateway_id
-- nat_gateway_ids
+
+| Name | Description |
+|------|-------------|
+| vpc_id | The ID of the created VPC. |
+| vpc_cidr_block | The CIDR block of the VPC. |
+| public_subnets | A list of IDs for the public subnets. |
+| app_subnets | A list of IDs for the application subnets. |
+| db_subnets | A list of IDs for the database subnets. |
