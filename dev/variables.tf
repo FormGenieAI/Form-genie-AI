@@ -18,3 +18,35 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "vpc_cidr" {
+  description = "CIDR block for the VPC"
+  type        = string
+}
+
+variable "azs" {
+  description = "List of exactly 3 availability zones"
+  type        = list(string)
+}
+
+variable "app_port" {
+  description = "Application port exposed by ECS"
+  type        = number
+  default     = 80
+}
+
+variable "db_port" {
+  description = "Database port"
+  type        = number
+  default     = 3306
+}
+
+variable "bastion_key_name" {
+  description = "Existing EC2 key pair name for bastion"
+  type        = string
+}
+
+variable "bastion_allowed_cidrs" {
+  description = "CIDR blocks allowed to SSH into bastion"
+  type        = list(string)
+}
