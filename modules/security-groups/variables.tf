@@ -56,8 +56,3 @@ variable "common_tags" {
   type        = map(string)
   default     = {}
 }
-
-variable "bastion_allowed_cidrs" {
-  description = "CIDR blocks allowed to SSH to bastion"
-  type        = list(string)
-}

@@ -46,7 +46,8 @@ variable "bastion_key_name" {
   type        = string
 }
 
-variable "bastion_allowed_cidrs" {
-  description = "CIDR blocks allowed to SSH into bastion"
+
+variable "allowed_ingress_cidrs" {
+  description = "CIDR blocks allowed to access the ALB"
   type        = list(string)
 }

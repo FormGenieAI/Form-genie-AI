@@ -19,8 +19,9 @@ tags = {
 app_port = 80
 db_port  = 3306
 
-bastion_allowed_cidrs = [
-  "185.97.94.94/32"
-]
 
 bastion_key_name = "birmigham"
+
+allowed_ingress_cidrs = [
+  "0.0.0.0/0"
+]

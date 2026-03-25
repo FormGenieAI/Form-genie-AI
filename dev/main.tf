@@ -16,8 +16,7 @@ module "security_groups" {
   vpc_id                = module.vpc.vpc_id
   app_port              = var.app_port
   db_port               = var.db_port
-  allowed_ingress_cidrs = ["0.0.0.0/0"]
-  bastion_allowed_cidrs = var.bastion_allowed_cidrs
+  allowed_ingress_cidrs = var.allowed_ingress_cidrs
   common_tags           = var.tags
 }
 
@@ -48,15 +47,15 @@ module "security" {
   enable_log_file_validation    = true
   include_global_service_events = true
 
-  enable_guardduty = false
-  enable_inspector = false
+  enable_guardduty   = false
+  enable_inspector   = false
   enable_securityhub = false
 
   enable_config               = true
   enable_config_managed_rules = true
 
   enable_notifications = true
-  notification_emails  = ["support@formgenai.com"]
+  notification_emails  = ["support@formgenieai.com"]
 
   tags = var.tags
 }
