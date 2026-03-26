@@ -55,7 +55,86 @@ module "security" {
   enable_config_managed_rules = true
 
   enable_notifications = true
-  notification_emails  = ["support@formgenieai.com"]
+
+  tags = var.tags
+}
+
+module "iam" {
+  source = "../modules/iam_roles"
+
+  project_name = var.project_name
+  environment  = var.environment
+
+  ssm_parameter_arns = [
+    module.ssm_parameters.db_host_arn,
+    module.ssm_parameters.db_user_arn,
+    module.ssm_parameters.db_password_arn,
+    module.ssm_parameters.db_name_arn
+  ]
+
+  kms_key_arns = []
+
+  common_tags = var.tags
+}
+
+module "ecs_cluster" {
+  source = "../modules/ecs-cluster"
+
+  name        = "${var.project_name}-${var.environment}-ecs-cluster"
+  environment = var.environment
+
+  cluster_settings = [
+    {
+      name  = "containerInsights"
+      value = "enabled"
+    }
+  ]
+
+  execute_command_logging                       = "OVERRIDE"
+  execute_command_log_group_name                = aws_cloudwatch_log_group.ecs_exec.name
+  execute_command_cloudwatch_encryption_enabled = true
+
+  enable_capacity_providers = true
+
+  capacity_providers = [
+    "FARGATE",
+    "FARGATE_SPOT"
+  ]
+
+  default_capacity_provider_strategy = [
+    {
+      capacity_provider = "FARGATE"
+      weight            = 1
+    }
+  ]
+
+  tags = var.tags
+}
+
+resource "aws_cloudwatch_log_group" "ecs_exec" {
+  name              = "/aws/ecs/${var.project_name}-${var.environment}/exec"
+  retention_in_days = 7
+
+  tags = var.tags
+}
+
+
+module "ecr" {
+  source = "../modules/ecr"
+
+  repository_name       = var.ecr_repository_name
+  image_retention_count = var.ecr_image_retention_count
+  common_tags           = var.tags
+}
+
+module "ssm_parameters" {
+  source = "../modules/ssm"
+
+  prefix      = var.ssm_prefix
+  db_host     = var.ssm_db_host
+  db_user     = var.ssm_db_user
+  db_password = var.ssm_db_password
+  db_name     = var.ssm_db_name
 
   tags = var.tags
 }

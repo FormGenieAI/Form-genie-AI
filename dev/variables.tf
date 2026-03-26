@@ -51,3 +51,40 @@ variable "allowed_ingress_cidrs" {
   description = "CIDR blocks allowed to access the ALB"
   type        = list(string)
 }
+
+variable "ecr_repository_name" {
+  description = "Name of the ECR repository for the application"
+  type        = string
+}
+
+variable "ecr_image_retention_count" {
+  description = "Number of images to retain in the ECR lifecycle policy"
+  type        = number
+  default     = 10
+}
+
+variable "ssm_prefix" {
+  description = "Prefix used for SSM parameter paths"
+  type        = string
+}
+
+variable "ssm_db_host" {
+  description = "Database host value for SSM parameter"
+  type        = string
+}
+
+variable "ssm_db_user" {
+  description = "Database username value for SSM parameter"
+  type        = string
+}
+
+variable "ssm_db_password" {
+  description = "Database password value for SSM parameter"
+  type        = string
+  sensitive   = true
+}
+
+variable "ssm_db_name" {
+  description = "Database name value for SSM parameter"
+  type        = string
+}

@@ -71,3 +71,32 @@ output "security_guardduty_detector_id" {
 output "security_sns_topic_arn" {
   value = module.security.sns_topic_arn
 }
+
+output "ecs_cluster_id" {
+  description = "ECS cluster ID"
+  value       = module.ecs_cluster.cluster_id
+}
+
+output "ecs_cluster_name" {
+  description = "ECS cluster name"
+  value       = module.ecs_cluster.cluster_name
+}
+
+output "ecs_cluster_arn" {
+  description = "ECS cluster ARN"
+  value       = module.ecs_cluster.cluster_arn
+}
+
+output "ecs_cluster_capacity_providers" {
+  description = "ECS cluster capacity providers"
+  value       = module.ecs_cluster.cluster_capacity_providers
+}
+
+output "ssm_db_parameters" {
+  value = {
+    host     = module.ssm_parameters.db_host_parameter_name
+    user     = module.ssm_parameters.db_user_parameter_name
+    password = module.ssm_parameters.db_password_parameter_name
+    db_name  = module.ssm_parameters.db_name_parameter_name
+  }
+}

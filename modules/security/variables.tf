@@ -102,12 +102,6 @@ variable "enable_notifications" {
   default     = false
 }
 
-variable "notification_emails" {
-  description = "List of email addresses for security notifications"
-  type        = list(string)
-  default     = []
-}
-
 variable "tags" {
   description = "Common tags"
   type        = map(string)
